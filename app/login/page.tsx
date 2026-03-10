@@ -1,17 +1,17 @@
 "use client";
 
-
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-console.log("API URL FIXED:", API_URL);
 
 export default function LoginPage() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -19,14 +19,13 @@ export default function LoginPage() {
     setError("");
 
     try {
-        console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
-        const res = await fetch(`${API_URL}/admin/login`, {
+      const res = await fetch(`${API_URL}/admin/login`, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
-        });
+      });
 
       const data = await res.json();
 
@@ -34,11 +33,9 @@ export default function LoginPage() {
         throw new Error(data.message || "Error al iniciar sesión");
       }
 
-      // Guardamos token
       localStorage.setItem("token", data.token);
 
-      // Redirigir
-      window.location.href = "/dashboard";
+      router.replace("/dashboard");
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -46,15 +43,13 @@ export default function LoginPage() {
     }
   }
 
-  console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-black">
       <form
         onSubmit={handleLogin}
-        className="bg-white p-8 rounded shadow-md w-96"
+        className="bg-gray-900 p-8 rounded shadow-md w-96"
       >
-        <h1 className="text-2xl font-bold mb-6 text-center">
+        <h1 className="text-2xl font-bold mb-6 text-center text-white">
           Admin Login
         </h1>
 
@@ -83,7 +78,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-black text-white p-2 rounded hover:bg-gray-800"
+          className="w-full bg-white text-black p-2 rounded"
         >
           {loading ? "Ingresando..." : "Ingresar"}
         </button>
