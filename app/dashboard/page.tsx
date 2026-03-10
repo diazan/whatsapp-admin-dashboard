@@ -253,42 +253,48 @@ export default function DashboardPage() {
                   </td>
                   <td className="p-3">{appt.status}</td>
                 <td className="p-3 flex gap-2">
-                {appt.status === "scheduled" && (
-                    <>
-                    <button
-                        onClick={() =>
-                        handleStatusChange(appt.id, "confirmed")
-                        }
-                        className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition text-sm"
-                    >
-                        Confirmar
-                    </button>
+                {(() => {
+                    const now = new Date();
+                    const appointmentDate = new Date(appt.startAt);
+                    const isPast = appointmentDate <= now;
 
-                    <button
-                        onClick={() =>
-                        handleStatusChange(appt.id, "cancelled")
-                        }
-                        className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition text-sm"
-                    >
-                        Cancelar
-                    </button>
-                    </>
-                )}
+                    const isFinalized =
+                    appt.status === "attended" ||
+                    appt.status === "no_show" ||
+                    appt.status === "cancelled";
 
-                {appt.status === "confirmed" && (
-                    <button
-                    onClick={() =>
-                        handleStatusChange(appt.id, "cancelled")
+                    if (isFinalized) return null;
+
+                    if (!isPast) {
+                    return (
+                        <>
+                        {appt.status === "scheduled" && (
+                            <button
+                            onClick={() =>
+                                handleStatusChange(appt.id, "confirmed")
+                            }
+                            className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition text-sm"
+                            >
+                            Confirmar
+                            </button>
+                        )}
+
+                        {appt.status !== "cancelled" && (
+                            <button
+                            onClick={() =>
+                                handleStatusChange(appt.id, "cancelled")
+                            }
+                            className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition text-sm"
+                            >
+                            Cancelar
+                            </button>
+                        )}
+                        </>
+                    );
                     }
-                    className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition text-sm"
-                    >
-                    Cancelar
-                    </button>
-                )}
 
-                {(appt.status === "scheduled" ||
-                    appt.status === "confirmed") &&
-                    new Date(appt.startAt) <= new Date() && (
+                    // ✅ Cita pasada
+                    return (
                     <>
                         <button
                         onClick={() =>
@@ -308,7 +314,8 @@ export default function DashboardPage() {
                         No asistió
                         </button>
                     </>
-                    )}
+                    );
+                })()}
                 </td>
                 </tr>
               );
