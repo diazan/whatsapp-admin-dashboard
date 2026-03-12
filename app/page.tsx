@@ -3,23 +3,29 @@ export default function Home() {
     <div className="min-h-screen bg-black text-white flex flex-col">
 
       {/* Hero */}
-      <section className="flex flex-col items-center justify-center text-center px-6 py-24">
-        <h1 className="text-4xl md:text-5xl font-bold mb-6">
+    <section className="relative flex flex-col items-center justify-center text-center px-6 py-32 bg-black overflow-hidden">
+      
+      <div className="absolute inset-0 animate-glow"></div>
+
+      <div className="relative z-10">
+        <h1 className="text-5xl md:text-6xl font-bold mb-6">
           Automatización inteligente para negocios con agenda
         </h1>
 
-        <p className="max-w-2xl text-lg text-gray-400 mb-8">
-          En Kerbo desarrollamos herramientas SaaS que ayudan a empresas a reducir cancelaciones,
-          optimizar su operación y aumentar ingresos mediante automatización por WhatsApp.
+        <p className="max-w-2xl mx-auto text-lg text-gray-300 mb-8 leading-relaxed">
+          En Kerbo desarrollamos herramientas SaaS que ayudan a empresas a reducir
+          cancelaciones, optimizar su operación y aumentar ingresos mediante automatización por WhatsApp.
         </p>
 
         <a
           href="/kerbo-flow"
-          className="bg-blue-600 hover:bg-blue-700 transition px-6 py-3 rounded-lg font-medium"
+          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90 transition px-8 py-4 rounded-xl font-medium text-lg shadow-lg"
         >
           Conoce Kerbo Flow
         </a>
-      </section>
+      </div>
+
+    </section>
 
       {/* Producto destacado */}
       <section className="bg-zinc-900 py-20 px-6 text-center">

@@ -3,23 +3,29 @@ export default function KerboFlowPage() {
     <div className="min-h-screen bg-black text-white flex flex-col">
 
       {/* Hero */}
-      <section className="flex flex-col items-center justify-center text-center px-6 py-24">
-        <h1 className="text-4xl md:text-5xl font-bold mb-6">
-          Reduce hasta 40% tus no‑shows con automatización por WhatsApp
+    <section className="relative flex flex-col items-center justify-center text-center px-6 py-32 bg-black overflow-hidden">
+    
+    <div className="absolute inset-0 animate-glow-green"></div>
+
+    <div className="relative z-10">
+        <h1 className="text-5xl md:text-6xl font-bold mb-6">
+        Reduce hasta 40% tus no‑shows con automatización por WhatsApp
         </h1>
 
-        <p className="max-w-2xl text-lg text-gray-400 mb-8">
-          Kerbo Flow automatiza recordatorios de citas y permite a tus clientes
-          confirmar o reagendar en un solo clic, sin llamadas y sin esfuerzo manual.
+        <p className="max-w-2xl mx-auto text-lg text-gray-300 mb-8 leading-relaxed">
+        Kerbo Flow automatiza recordatorios de citas y permite a tus clientes confirmar
+        o reagendar en un solo clic, sin llamadas y sin esfuerzo manual.
         </p>
 
         <a
-          href="https://wa.me/573163115687"
-          className="bg-green-600 hover:bg-green-700 transition px-6 py-3 rounded-lg font-medium"
+        href="https://wa.me/573163115687"
+        className="bg-green-600 hover:bg-green-700 hover:scale-105 transform transition px-8 py-4 rounded-xl font-medium text-lg shadow-lg"
         >
-          Probar ahora en WhatsApp
+        Probar ahora en WhatsApp
         </a>
-      </section>
+    </div>
+
+    </section>
 
       {/* Cómo funciona */}
       <section className="bg-zinc-900 py-20 px-6">
