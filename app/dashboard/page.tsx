@@ -28,17 +28,18 @@ interface Metrics {
 export default function DashboardPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(false);
+
   const handleLogout = () => {
-  localStorage.removeItem("token");
-  window.location.href = "/login";
-};
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
 
   const [status, setStatus] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
 
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(5);
+  const [pageSize] = useState(10); // ✅ ahora 10
   const [total, setTotal] = useState(0);
 
   const [metrics, setMetrics] = useState<Metrics>({
@@ -131,26 +132,65 @@ export default function DashboardPage() {
     }
   };
 
+  const handleSendManualMessage = async (
+    phone: string,
+    patientName: string
+  ) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const link = prompt(
+      `Enviar mensaje a ${patientName}\n\nPega aquí el enlace o mensaje:`
+    );
+
+    if (!link) return;
+
+    try {
+      const res = await fetch(
+        `${API_URL}/admin/send-manual-message`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            to: phone,
+            message: link,
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        alert("Error enviando mensaje");
+        return;
+      }
+
+      alert("Mensaje enviado ✅");
+    } catch (error) {
+      console.error("Error sending manual message:", error);
+      alert("Error enviando mensaje");
+    }
+  };
+
   useEffect(() => {
     fetchAppointments();
   }, [page, status, from, to]);
 
   return (
     <div className="p-8 max-w-6xl mx-auto text-white">
-    <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">
-        Dashboard de Citas
-        </h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Dashboard de Citas</h1>
 
-    <button
-      onClick={handleLogout}
-      className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm transition"
-    >
-      Logout
-    </button>
-  </div>
+        <button
+          onClick={handleLogout}
+          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm transition"
+        >
+          Logout
+        </button>
+      </div>
 
-      {/* KPI Section */}
+      {/* KPI */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-gray-800 border border-gray-700 rounded p-4 shadow-sm">
           <p className="text-sm text-gray-400">No‑Show Rate</p>
@@ -226,111 +266,128 @@ export default function DashboardPage() {
           <thead className="bg-gray-800 text-gray-200">
             <tr>
               <th className="p-3 text-left">Paciente</th>
+              <th className="p-3 text-left">Teléfono</th>
               <th className="p-3 text-left">Servicio</th>
               <th className="p-3 text-left">Fecha</th>
               <th className="p-3 text-left">Estado</th>
-              <th className="p-3 text-left">Acciones</th>
+              <th className="p-3 text-center">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {appointments.map((appt) => {
-              const isFuture =
-              new Date(appt.startAt) > new Date();
+            {appointments.map((appt) => (
+              <tr key={appt.id} className="border-t border-gray-700">
+                <td className="p-3">{appt.patientName}</td>
+                <td className="p-3 text-gray-300">{appt.patientPhone}</td>
+                <td className="p-3">{appt.service?.name}</td>
+                <td className="p-3">
+                  {new Date(appt.startAt).toLocaleString()}
+                </td>
+                <td className="p-3">{appt.status}</td>
 
-            const isFinalized =
-            appt.status === "attended" ||
-            appt.status === "no_show" ||
-            appt.status === "cancelled";
-              return (
-                <tr
-                  key={appt.id}
-                  className="border-t border-gray-700"
-                >
-                  <td className="p-3">{appt.patientName}</td>
-                  <td className="p-3">{appt.service?.name}</td>
-                  <td className="p-3">
-                    {new Date(appt.startAt).toLocaleString()}
-                  </td>
-                  <td className="p-3">{appt.status}</td>
-                <td className="p-3 flex gap-2">
-                {(() => {
+                <td className="p-3 text-center">
+                  {(() => {
                     const now = new Date();
                     const appointmentDate = new Date(appt.startAt);
                     const isPast = appointmentDate <= now;
 
                     const isFinalized =
-                    appt.status === "attended" ||
-                    appt.status === "no_show" ||
-                    appt.status === "cancelled";
+                      appt.status === "attended" ||
+                      appt.status === "no_show" ||
+                      appt.status === "cancelled";
 
-                    if (isFinalized) return null;
-
-                    if (!isPast) {
-                    return (
-                        <>
-                        {appt.status === "scheduled" && (
-                            <button
-                            onClick={() =>
-                                handleStatusChange(appt.id, "confirmed")
-                            }
-                            className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition text-sm"
-                            >
-                            Confirmar
-                            </button>
-                        )}
-
-                        {appt.status !== "cancelled" && (
-                            <button
-                            onClick={() =>
-                                handleStatusChange(appt.id, "cancelled")
-                            }
-                            className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition text-sm"
-                            >
-                            Cancelar
-                            </button>
-                        )}
-                        </>
-                    );
+                    if (isFinalized) {
+                      return (
+                        <span className="text-gray-500 text-sm italic">
+                          Finalizada
+                        </span>
+                      );
                     }
 
-                    // ✅ Cita pasada
+                    if (!isPast) {
+                      return (
+                        <div className="flex justify-center gap-2">
+                          {appt.status === "scheduled" && (
+                            <button
+                              onClick={() =>
+                                handleStatusChange(appt.id, "confirmed")
+                              }
+                              className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition text-sm"
+                            >
+                              Confirmar
+                            </button>
+                          )}
+
+                          {appt.status !== "cancelled" && (
+                            <button
+                              onClick={() =>
+                                handleStatusChange(appt.id, "cancelled")
+                              }
+                              className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition text-sm"
+                            >
+                              Cancelar
+                            </button>
+                          )}
+
+                          <button
+                            onClick={() =>
+                              handleSendManualMessage(
+                                appt.patientPhone,
+                                appt.patientName
+                              )
+                            }
+                            className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition text-sm"
+                          >
+                            Mensaje
+                          </button>
+                        </div>
+                      );
+                    }
+
                     return (
-                    <>
+                      <div className="flex justify-center gap-2">
                         <button
-                        onClick={() =>
+                          onClick={() =>
                             handleStatusChange(appt.id, "attended")
-                        }
-                        className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm"
+                          }
+                          className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm"
                         >
-                        Asistió
+                          Asistió
                         </button>
 
                         <button
-                        onClick={() =>
+                          onClick={() =>
                             handleStatusChange(appt.id, "no_show")
-                        }
-                        className="px-3 py-1 bg-yellow-500 text-black rounded hover:bg-yellow-600 transition text-sm"
+                          }
+                          className="px-3 py-1 bg-yellow-500 text-black rounded hover:bg-yellow-600 transition text-sm"
                         >
-                        No asistió
+                          No asistió
                         </button>
-                    </>
+
+                        <button
+                          onClick={() =>
+                            handleSendManualMessage(
+                              appt.patientPhone,
+                              appt.patientName
+                            )
+                          }
+                          className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition text-sm"
+                        >
+                          Mensaje
+                        </button>
+                      </div>
                     );
-                })()}
+                  })()}
                 </td>
-                </tr>
-              );
-            })}
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
 
-      {/* Paginación (solo si hay más de 1 página) */}
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-4 mt-6">
           <button
-            onClick={() =>
-              setPage((prev) => Math.max(prev - 1, 1))
-            }
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
             disabled={page === 1}
             className="px-4 py-2 bg-gray-700 text-white rounded disabled:opacity-40"
           >
