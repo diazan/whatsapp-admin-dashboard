@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
+const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 interface Service {
   id: string;
@@ -25,8 +25,27 @@ interface Metrics {
   noShowRate: number;
 }
 
+interface SalesDemo {
+  id: string;
+  name: string;
+  phone: string;
+  preferredAt: string;
+  status: string;
+  createdAt: string;
+}
+
 export default function DashboardPage() {
+    console.log("✅ DASHBOARD NUEVO EJECUTÁNDOSE");
+    useEffect(() => {
+  console.log("🌍 CLIENTE: useEffect vacío ejecutado");
+}, []);
+    if (typeof window !== "undefined") {
+  console.log("🌍 Estoy en el CLIENTE");
+} else {
+  console.log("🖥️ Estoy en el SERVIDOR");
+}
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [salesDemos, setSalesDemos] = useState<SalesDemo[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleLogout = () => {
@@ -39,7 +58,7 @@ export default function DashboardPage() {
   const [to, setTo] = useState("");
 
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(10); // ✅ ahora 10
+  const [pageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
   const [metrics, setMetrics] = useState<Metrics>({
@@ -96,9 +115,39 @@ export default function DashboardPage() {
     }
   };
 
-  const handleApplyFilters = () => {
-    setPage(1);
+  const fetchSalesDemos = async () => {
+    console.log("Fetching sales demos...");
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(`${API_URL}/admin/sales-demos`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+        return;
+      }
+
+      const data = await res.json();
+      setSalesDemos(data);
+    } catch (error) {
+      console.error("Error fetching sales demos:", error);
+    }
   };
+
+  useEffect(() => {
+    fetchAppointments();
+    fetchSalesDemos();
+  }, [page, status, from, to]);
+
+    const handleApplyFilters = () => {
+      setPage(1);
+    };
 
   const handleStatusChange = async (
     appointmentId: string,
@@ -172,10 +221,6 @@ export default function DashboardPage() {
       alert("Error enviando mensaje");
     }
   };
-
-  useEffect(() => {
-    fetchAppointments();
-  }, [page, status, from, to]);
 
   return (
     <div className="p-8 max-w-6xl mx-auto text-white">
@@ -382,6 +427,42 @@ export default function DashboardPage() {
             ))}
           </tbody>
         </table>
+      </div>
+
+            {/* Sales Demos */}
+      <div className="mt-12">
+        <h2 className="text-xl font-bold mb-4">Solicitudes de Demo</h2>
+
+        <div className="border border-gray-700 rounded overflow-hidden bg-gray-900">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-800 text-gray-200">
+              <tr>
+                <th className="p-3 text-left">Nombre</th>
+                <th className="p-3 text-left">Teléfono</th>
+                <th className="p-3 text-left">Fecha Preferida</th>
+                <th className="p-3 text-left">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              {salesDemos.map((demo) => (
+                <tr key={demo.id} className="border-t border-gray-700">
+                  <td className="p-3">{demo.name}</td>
+                  <td className="p-3 text-gray-300">{demo.phone}</td>
+                  <td className="p-3">
+                    {new Date(demo.preferredAt).toLocaleString()}
+                  </td>
+                  <td className="p-3">{demo.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {salesDemos.length === 0 && (
+            <div className="p-4 text-gray-400 text-sm">
+              No hay solicitudes de demo.
+            </div>
+          )}
+        </div>
       </div>
 
       {totalPages > 1 && (
