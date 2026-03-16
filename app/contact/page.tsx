@@ -10,8 +10,8 @@ export default function ContactPage() {
         </p>
 
         <ul className="text-gray-300 space-y-4">
-          <li>Email: contacto@kerbo.co</li>
-          <li>WhatsApp: +573163115687</li>
+          <li>Email: kerbo.col@gmail.com</li>
+          <li>WhatsApp: +573227249031</li>
         </ul>
 
         <div className="mt-10">

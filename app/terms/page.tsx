@@ -42,7 +42,7 @@ export default function TermsPage() {
         </h2>
         <p className="text-gray-400">
           Para consultas relacionadas con estos términos, contáctanos en:
-          contacto@kerbo.co
+          kerbo.col@gmail.com
         </p>
 
         <div className="mt-10">

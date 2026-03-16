@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
+
 interface Service {
   id: string;
   name: string;
@@ -32,6 +33,8 @@ interface SalesDemo {
   preferredAt: string;
   status: string;
   createdAt: string;
+  meetLink: string | null;
+  meetLinkSentAt: string | null;
 }
 
 export default function DashboardPage() {
@@ -47,6 +50,8 @@ export default function DashboardPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [salesDemos, setSalesDemos] = useState<SalesDemo[]>([]);
   const [loading, setLoading] = useState(false);
+  const [notificationsActive, setNotificationsActive] = useState<boolean>(true);
+  const [adminPhone, setAdminPhone] = useState<string | null>(null);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -115,6 +120,27 @@ export default function DashboardPage() {
     }
   };
 
+    const fetchClinicStatus = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(`${API_URL}/admin/health`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const data = await res.json();
+      if (data.clinic?.notificationsActive !== undefined) {
+        setNotificationsActive(data.clinic.notificationsActive);
+      }
+      if (data.clinic?.adminPhone !== undefined) {  
+      setAdminPhone(data.clinic.adminPhone);
+    }
+    } catch (error) {
+      console.error("Error fetching clinic status:", error);
+    }
+  };
+
   const fetchSalesDemos = async () => {
     console.log("Fetching sales demos...");
     const token = localStorage.getItem("token");
@@ -143,6 +169,7 @@ export default function DashboardPage() {
   useEffect(() => {
     fetchAppointments();
     fetchSalesDemos();
+    fetchClinicStatus();
   }, [page, status, from, to]);
 
     const handleApplyFilters = () => {
@@ -178,6 +205,72 @@ export default function DashboardPage() {
       fetchAppointments();
     } catch (error) {
       console.error("Error updating status:", error);
+    }
+  };
+
+    const handleToggleNotifications = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(`${API_URL}/admin/clinic/notifications-toggle`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (!res.ok) {
+        alert("Error actualizando notificaciones");
+        return;
+      }
+
+      const data = await res.json();
+      setNotificationsActive(data.notificationsActive);
+
+    } catch (error) {
+      console.error("Error toggling notifications:", error);
+    }
+  };
+
+  const handleSendMeetLink = async (demoId: string, demoName: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const template = 
+      `Hola ${demoName} 👋\n\n` +
+      `Te comparto el enlace para nuestra demo:\n` +
+      `🔗 https://meet.google.com/\n\n` +
+      `Cualquier duda estoy aquí. ¡Nos vemos pronto! 🚀`;
+
+    const meetLink = prompt(
+      `Mensaje para ${demoName}\n\nPodés editar o reemplazar el mensaje:`,
+      template
+    );
+
+    if (!meetLink) return;
+
+    try {
+      const res = await fetch(
+        `${API_URL}/admin/sales-demos/${demoId}/send-meet-link`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ meetLink }),
+        }
+      );
+
+      if (!res.ok) {
+        alert("Error enviando el mensaje");
+        return;
+      }
+
+      alert("Mensaje enviado ✅");
+      fetchSalesDemos();
+    } catch (error) {
+      console.error("Error sending message:", error);
+      alert("Error enviando el mensaje");
     }
   };
 
@@ -222,17 +315,60 @@ export default function DashboardPage() {
     }
   };
 
+  const handleSalesDemoStatusChange = async (demoId: string, newStatus: string) => {
+  const token = localStorage.getItem("token");
+  if (!token) return;
+
+  try {
+    const res = await fetch(
+      `${API_URL}/admin/sales-demos/${demoId}/status`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      }
+    );
+
+    if (!res.ok) {
+      alert("Error actualizando estado");
+      return;
+    }
+
+    fetchSalesDemos();
+  } catch (error) {
+    console.error("Error updating demo status:", error);
+  }
+};
+
   return (
     <div className="p-8 max-w-6xl mx-auto text-white">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Dashboard de Citas</h1>
 
-        <button
-          onClick={handleLogout}
-          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm transition"
-        >
-          Logout
-        </button>
+        <div className="flex items-center gap-3">
+            {adminPhone && (
+              <button
+                onClick={handleToggleNotifications}
+                className={`px-4 py-2 rounded text-sm transition font-medium ${
+                  notificationsActive
+                    ? "bg-green-600 hover:bg-green-700 text-white"
+                    : "bg-gray-600 hover:bg-gray-500 text-white"
+                }`}
+              >
+                {notificationsActive ? "🔔 Notificaciones ON" : "🔕 Notificaciones OFF"}
+              </button>
+            )}
+
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm transition"
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
       {/* KPI */}
@@ -429,42 +565,76 @@ export default function DashboardPage() {
         </table>
       </div>
 
-            {/* Sales Demos */}
-      <div className="mt-12">
-        <h2 className="text-xl font-bold mb-4">Solicitudes de Demo</h2>
+{/* Sales Demos */}
+<div className="mt-12">
+  <h2 className="text-xl font-bold mb-4">Solicitudes de Demo</h2>
 
-        <div className="border border-gray-700 rounded overflow-hidden bg-gray-900">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-800 text-gray-200">
-              <tr>
-                <th className="p-3 text-left">Nombre</th>
-                <th className="p-3 text-left">Teléfono</th>
-                <th className="p-3 text-left">Fecha Preferida</th>
-                <th className="p-3 text-left">Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {salesDemos.map((demo) => (
-                <tr key={demo.id} className="border-t border-gray-700">
-                  <td className="p-3">{demo.name}</td>
-                  <td className="p-3 text-gray-300">{demo.phone}</td>
-                  <td className="p-3">
-                    {new Date(demo.preferredAt).toLocaleString()}
-                  </td>
-                  <td className="p-3">{demo.status}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+  <div className="border border-gray-700 rounded overflow-hidden bg-gray-900">
+    <table className="w-full text-sm">
+      <thead className="bg-gray-800 text-gray-200">
+        <tr>
+          <th className="p-3 text-left">Nombre</th>
+          <th className="p-3 text-left">Teléfono</th>
+          <th className="p-3 text-left">Fecha Preferida</th>
+          <th className="p-3 text-left">Estado</th>
+          <th className="p-3 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {salesDemos.map((demo) => (
+          <tr key={demo.id} className="border-t border-gray-700">
+            <td className="p-3">{demo.name}</td>
+            <td className="p-3 text-gray-300">{demo.phone}</td>
+            <td className="p-3">
+              {new Date(demo.preferredAt).toLocaleString()}
+            </td>
+            <td className="p-3">
+              <select
+                value={demo.status}
+                onChange={(e) => handleSalesDemoStatusChange(demo.id, e.target.value)}
+                className="bg-gray-800 border border-gray-700 px-2 py-1 rounded text-white text-sm"
+              >
+                <option value="pending">🕐 Pendiente</option>
+                <option value="attended">✅ Asistió</option>
+                <option value="not_attended">❌ No asistió</option>
+                <option value="accepted">🎉 Aceptado</option>
+                <option value="rejected">🚫 Rechazado</option>
+              </select>
+            </td>
+            <td className="p-3 text-center">
+              {demo.meetLinkSentAt ? (
+                <div className="flex flex-col items-center gap-1">
+                  <span className="text-green-400 text-xs">
+                    ✅ Link enviado
+                  </span>
+                  <button
+                    onClick={() => handleSendMeetLink(demo.id, demo.name)}
+                    className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition text-xs"
+                  >
+                    Reenviar link
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => handleSendMeetLink(demo.id, demo.name)}
+                  className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm"
+                >
+                  📎 Enviar link Meet
+                </button>
+              )}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
 
-          {salesDemos.length === 0 && (
-            <div className="p-4 text-gray-400 text-sm">
-              No hay solicitudes de demo.
-            </div>
-          )}
-        </div>
+    {salesDemos.length === 0 && (
+      <div className="p-4 text-gray-400 text-sm">
+        No hay solicitudes de demo.
       </div>
-
+    )}
+  </div>
+</div>
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-4 mt-6">
           <button
@@ -490,4 +660,6 @@ export default function DashboardPage() {
       )}
     </div>
   );
+
+  
 }

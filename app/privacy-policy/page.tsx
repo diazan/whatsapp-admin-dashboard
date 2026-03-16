@@ -41,7 +41,7 @@ export default function PrivacyPolicyPage() {
         </h2>
         <p className="text-gray-400">
           Si tienes preguntas sobre esta Política de Privacidad,
-          puedes contactarnos en: contacto@kerbo.co
+          puedes contactarnos en: kerbo.col@gmail.com
         </p>
 
         <div className="mt-10">
