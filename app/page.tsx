@@ -9,7 +9,7 @@ export default function Home() {
   <div className="absolute inset-0 animate-glow"></div>
 
   {/* Logo absoluto */}
-  <div className="absolute -top-[2px] -top-8 left-1/2 -translate-x-1/2 z-20">
+  <div className="absolute -top-[2px] md:-top-8 left-1/2 -translate-x-1/2 z-20">
     <Image
       src="/kerbo_no_bg.png"
       alt="Kerbo Logo"
