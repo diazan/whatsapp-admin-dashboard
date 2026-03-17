@@ -18,7 +18,7 @@ export default function KerboFlowPage() {
         </p>
 
         <a
-        href="https://wa.me/573227249031"
+        href="https://wa.me/573227249031?text=Hola%2C%20me%20interesa%20conocer%20m%C3%A1s%20sobre%20el%20servicio"
         className="bg-green-600 hover:bg-green-700 hover:scale-105 transform transition px-8 py-4 rounded-xl font-medium text-lg shadow-lg"
         >
         Probar ahora en WhatsApp
@@ -84,7 +84,7 @@ export default function KerboFlowPage() {
         </h2>
 
         <a
-          href="https://wa.me/573227249031"
+          href="https://wa.me/573227249031?text=Hola%2C%20me%20interesa%20conocer%20m%C3%A1s%20sobre%20el%20servicio"
           className="bg-green-600 hover:bg-green-700 transition px-8 py-4 rounded-lg font-medium text-lg"
         >
           Hablar por WhatsApp
