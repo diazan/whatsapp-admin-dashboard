@@ -21,7 +21,7 @@ export default function Home() {
 
   <div className="relative z-10 max-w-6xl">
 
-<h1 className="text-[2.7rem] md:text-[3.4rem] font-bold mt-20 mb-6 leading-tight">
+<h1 className="text-[2.7rem] md:text-[3.4rem] font-bold mt-24 mb-6 leading-tight">
 
   Automatización inteligente para negocios
   <br />
