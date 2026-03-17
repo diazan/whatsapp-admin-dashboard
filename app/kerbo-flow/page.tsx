@@ -21,7 +21,7 @@ export default function KerboFlowPage() {
 
     <div className="relative z-10">
         <h1 className="text-5xl md:text-6xl font-bold mt-17 mb-6">
-        Reduce hasta 40% tus no‑shows con automatización por WhatsApp
+        Reduce hasta 40% tus no‑shows Automatización por WhatsApp
         </h1>
 
         <p className="max-w-2xl mx-auto text-lg text-gray-300 mb-8 leading-relaxed">
