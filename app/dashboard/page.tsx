@@ -82,6 +82,13 @@ useEffect(() => {
   });
 
   const totalPages = Math.ceil(total / pageSize);
+  const salesMetrics = {
+  total: salesDemos.length,
+  conversion: salesDemos.length > 0
+    ? Math.round((salesDemos.filter(d => d.status === "accepted").length / salesDemos.length) * 100)
+    : 0,
+  pending: salesDemos.filter(d => d.status === "pending").length
+};
 
   const fetchAppointments = async () => {
     const token = localStorage.getItem("token");
@@ -380,29 +387,54 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* KPI */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-gray-800 border border-gray-700 rounded p-4 shadow-sm">
-          <p className="text-sm text-gray-400">No‑Show Rate</p>
-          <p className="text-2xl font-bold text-red-500">
-            {metrics.noShowRate}%
-          </p>
-        </div>
+        {/* KPI */}
+        {isSalesAdmin ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="bg-gray-800 border border-gray-700 rounded p-4 shadow-sm">
+              <p className="text-sm text-gray-400">Total Solicitudes</p>
+              <p className="text-2xl font-bold text-blue-400">
+                {salesMetrics.total}
+              </p>
+            </div>
 
-        <div className="bg-gray-800 border border-gray-700 rounded p-4 shadow-sm">
-          <p className="text-sm text-gray-400">Asistidas</p>
-          <p className="text-2xl font-bold text-green-500">
-            {metrics.attended}
-          </p>
-        </div>
+            <div className="bg-gray-800 border border-gray-700 rounded p-4 shadow-sm">
+              <p className="text-sm text-gray-400">Tasa de Conversión</p>
+              <p className="text-2xl font-bold text-green-500">
+                {salesMetrics.conversion}%
+              </p>
+            </div>
 
-        <div className="bg-gray-800 border border-gray-700 rounded p-4 shadow-sm">
-          <p className="text-sm text-gray-400">No asistieron</p>
-          <p className="text-2xl font-bold text-yellow-400">
-            {metrics.noShow}
-          </p>
-        </div>
-      </div>
+            <div className="bg-gray-800 border border-gray-700 rounded p-4 shadow-sm">
+              <p className="text-sm text-gray-400">Pendientes</p>
+              <p className="text-2xl font-bold text-yellow-400">
+                {salesMetrics.pending}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="bg-gray-800 border border-gray-700 rounded p-4 shadow-sm">
+              <p className="text-sm text-gray-400">No‑Show Rate</p>
+              <p className="text-2xl font-bold text-red-500">
+                {metrics.noShowRate}%
+              </p>
+            </div>
+
+            <div className="bg-gray-800 border border-gray-700 rounded p-4 shadow-sm">
+              <p className="text-sm text-gray-400">Asistidas</p>
+              <p className="text-2xl font-bold text-green-500">
+                {metrics.attended}
+              </p>
+            </div>
+
+            <div className="bg-gray-800 border border-gray-700 rounded p-4 shadow-sm">
+              <p className="text-sm text-gray-400">No asistieron</p>
+              <p className="text-2xl font-bold text-yellow-400">
+                {metrics.noShow}
+              </p>
+            </div>
+          </div>
+        )}
 
       {/* Filtros */}
       <div className="flex flex-wrap gap-4 mb-6 items-end">
