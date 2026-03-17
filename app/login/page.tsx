@@ -34,6 +34,7 @@ export default function LoginPage() {
       }
 
       localStorage.setItem("token", data.token);
+      localStorage.setItem("clinic", JSON.stringify(data.clinic));
 
       router.replace("/dashboard");
     } catch (err: any) {

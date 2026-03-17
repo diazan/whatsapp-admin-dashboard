@@ -41,6 +41,14 @@ export default function DashboardPage() {
     console.log("✅ DASHBOARD NUEVO EJECUTÁNDOSE");
     useEffect(() => {
   console.log("🌍 CLIENTE: useEffect vacío ejecutado");
+  
+}, []);
+useEffect(() => {
+  const clinic = JSON.parse(localStorage.getItem("clinic") || "{}");
+  const DEMO_ID = process.env.NEXT_PUBLIC_DEMO_PHONE_NUMBER_ID;
+  if (clinic.phoneNumberId === DEMO_ID) {
+    setIsSalesAdmin(true);
+  }
 }, []);
     if (typeof window !== "undefined") {
   console.log("🌍 Estoy en el CLIENTE");
@@ -52,6 +60,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [notificationsActive, setNotificationsActive] = useState<boolean>(true);
   const [adminPhone, setAdminPhone] = useState<string | null>(null);
+  const [isSalesAdmin, setIsSalesAdmin] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -349,7 +358,7 @@ export default function DashboardPage() {
         <h1 className="text-2xl font-bold">Dashboard de Citas</h1>
 
         <div className="flex items-center gap-3">
-            {adminPhone && (
+            {adminPhone && !isSalesAdmin && (
               <button
                 onClick={handleToggleNotifications}
                 className={`px-4 py-2 rounded text-sm transition font-medium ${
