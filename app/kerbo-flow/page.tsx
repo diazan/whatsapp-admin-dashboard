@@ -1,3 +1,4 @@
+import Image from "next/image";
 export default function KerboFlowPage() {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
@@ -7,8 +8,19 @@ export default function KerboFlowPage() {
     
     <div className="absolute inset-0 animate-glow-green"></div>
 
+      {/* Logo absoluto */}
+  <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20">
+    <Image
+      src="/kerbo_no_bg.png"
+      alt="Kerbo Logo"
+      width={260}
+      height={260}
+      priority
+    />
+  </div>
+
     <div className="relative z-10">
-        <h1 className="text-5xl md:text-6xl font-bold mb-6">
+        <h1 className="text-5xl md:text-6xl font-bold mt-17 mb-6">
         Reduce hasta 40% tus no‑shows con automatización por WhatsApp
         </h1>
 
