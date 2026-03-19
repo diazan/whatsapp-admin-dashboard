@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
-
 interface Service {
   id: string;
   name: string;
@@ -373,8 +372,6 @@ console.log("should show pagination:", Math.ceil((data.count ?? 0) / pageSize) >
   }
 };
 
-
-
   return (
     <div className="p-8 max-w-6xl mx-auto text-white">
       <div className="flex items-center justify-between mb-6">
@@ -647,76 +644,7 @@ console.log("should show pagination:", Math.ceil((data.count ?? 0) / pageSize) >
         </table>
       </div>
 
-{/* Sales Demos */}
-<div className="mt-12">
-  <h2 className="text-xl font-bold mb-4">Solicitudes de Demo</h2>
-
-  <div className="border border-gray-700 rounded overflow-hidden bg-gray-900">
-    <table className="w-full text-sm">
-      <thead className="bg-gray-800 text-gray-200">
-        <tr>
-          <th className="p-3 text-left">Nombre</th>
-          <th className="p-3 text-left">Teléfono</th>
-          <th className="p-3 text-left">Fecha Preferida</th>
-          <th className="p-3 text-left">Estado</th>
-          <th className="p-3 text-center">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {salesDemos.map((demo) => (
-          <tr key={demo.id} className="border-t border-gray-700">
-            <td className="p-3">{demo.name}</td>
-            <td className="p-3 text-gray-300">{demo.phone}</td>
-            <td className="p-3">
-              {new Date(demo.preferredAt).toLocaleString()}
-            </td>
-            <td className="p-3">
-              <select
-                value={demo.status}
-                onChange={(e) => handleSalesDemoStatusChange(demo.id, e.target.value)}
-                className="bg-gray-800 border border-gray-700 px-2 py-1 rounded text-white text-sm"
-              >
-                <option value="pending">🕐 Pendiente</option>
-                <option value="attended">✅ Asistió</option>
-                <option value="not_attended">❌ No asistió</option>
-                <option value="accepted">🎉 Aceptado</option>
-                <option value="rejected">🚫 Rechazado</option>
-              </select>
-            </td>
-            <td className="p-3 text-center">
-              {demo.meetLinkSentAt ? (
-                <div className="flex flex-col items-center gap-1">
-                  <span className="text-green-400 text-xs">
-                    ✅ Link enviado
-                  </span>
-                  <button
-                    onClick={() => handleSendMeetLink(demo.id, demo.name)}
-                    className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition text-xs"
-                  >
-                    Reenviar link
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => handleSendMeetLink(demo.id, demo.name)}
-                  className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm"
-                >
-                  📎 Enviar link Meet
-                </button>
-              )}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-
-    {salesDemos.length === 0 && (
-      <div className="p-4 text-gray-400 text-sm">
-        No hay solicitudes de demo.
-      </div>
-    )}
-  </div>
-</div>
+      {/* 🎯 CONTROLES DE PAGINACIÓN MOVIDOS AQUÍ */}
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-4 mt-6">
           <button
@@ -740,8 +668,77 @@ console.log("should show pagination:", Math.ceil((data.count ?? 0) / pageSize) >
           </button>
         </div>
       )}
+
+      {/* Sales Demos */}
+      <div className="mt-12">
+        <h2 className="text-xl font-bold mb-4">Solicitudes de Demo</h2>
+
+        <div className="border border-gray-700 rounded overflow-hidden bg-gray-900">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-800 text-gray-200">
+              <tr>
+                <th className="p-3 text-left">Nombre</th>
+                <th className="p-3 text-left">Teléfono</th>
+                <th className="p-3 text-left">Fecha Preferida</th>
+                <th className="p-3 text-left">Estado</th>
+                <th className="p-3 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {salesDemos.map((demo) => (
+                <tr key={demo.id} className="border-t border-gray-700">
+                  <td className="p-3">{demo.name}</td>
+                  <td className="p-3 text-gray-300">{demo.phone}</td>
+                  <td className="p-3">
+                    {new Date(demo.preferredAt).toLocaleString()}
+                  </td>
+                  <td className="p-3">
+                    <select
+                      value={demo.status}
+                      onChange={(e) => handleSalesDemoStatusChange(demo.id, e.target.value)}
+                      className="bg-gray-800 border border-gray-700 px-2 py-1 rounded text-white text-sm"
+                    >
+                      <option value="pending">🕐 Pendiente</option>
+                      <option value="attended">✅ Asistió</option>
+                      <option value="not_attended">❌ No asistió</option>
+                      <option value="accepted">🎉 Aceptado</option>
+                      <option value="rejected">🚫 Rechazado</option>
+                    </select>
+                  </td>
+                  <td className="p-3 text-center">
+                    {demo.meetLinkSentAt ? (
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="text-green-400 text-xs">
+                          ✅ Link enviado
+                        </span>
+                        <button
+                          onClick={() => handleSendMeetLink(demo.id, demo.name)}
+                          className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition text-xs"
+                        >
+                          Reenviar link
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleSendMeetLink(demo.id, demo.name)}
+                        className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm"
+                      >
+                        📎 Enviar link Meet
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {salesDemos.length === 0 && (
+            <div className="p-4 text-gray-400 text-sm">
+              No hay solicitudes de demo.
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
-
-  
 }
