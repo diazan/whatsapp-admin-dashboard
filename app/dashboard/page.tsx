@@ -518,18 +518,37 @@ useEffect(() => {
                     const appointmentDate = new Date(appt.startAt);
                     const isPast = appointmentDate <= now;
 
-                    const isFinalized =
-                      appt.status === "attended" ||
-                      appt.status === "no_show" ||
-                      appt.status === "cancelled";
+                // REEMPLAZAR EL BLOQUE isFinalized (líneas 346-356) por:
+                if (appt.status === "attended" || appt.status === "no_show") {
+                  // Estados finalizados pero CON botón Mensaje persistente
+                  return (
+                    <div className="flex justify-center gap-2">
+                      <span className="text-gray-500 text-sm italic mr-2">
+                        Finalizada
+                      </span>
+                      <button
+                        onClick={() =>
+                          handleSendManualMessage(
+                            appt.patientPhone,
+                            appt.patientName
+                          )
+                        }
+                        className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition text-sm"
+                      >
+                        Mensaje
+                      </button>
+                    </div>
+                  );
+                }
 
-                    if (isFinalized) {
-                      return (
-                        <span className="text-gray-500 text-sm italic">
-                          Finalizada
-                        </span>
-                      );
-                    }
+                // Para "cancelled" mantener comportamiento actual (sin botón)
+                if (appt.status === "cancelled") {
+                  return (
+                    <span className="text-gray-500 text-sm italic">
+                      Finalizada
+                    </span>
+                  );
+                }
 
                     if (!isPast) {
                       return (
