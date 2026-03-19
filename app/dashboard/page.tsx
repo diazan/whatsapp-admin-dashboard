@@ -90,6 +90,12 @@ useEffect(() => {
   pending: salesDemos.filter(d => d.status === "pending").length
 };
 
+console.log("🔍 SIMPLE DEBUG:");
+console.log("total:", total);
+console.log("pageSize:", pageSize);  
+console.log("totalPages:", totalPages);
+console.log("totalPages > 1:", totalPages > 1);
+
   const fetchAppointments = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -367,11 +373,7 @@ console.log("should show pagination:", Math.ceil((data.count ?? 0) / pageSize) >
   }
 };
 
-console.log("🔍 SIMPLE DEBUG:");
-console.log("total:", total);
-console.log("pageSize:", pageSize);  
-console.log("totalPages:", totalPages);
-console.log("totalPages > 1:", totalPages > 1);
+
 
   return (
     <div className="p-8 max-w-6xl mx-auto text-white">
