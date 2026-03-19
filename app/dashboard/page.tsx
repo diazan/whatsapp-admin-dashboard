@@ -468,24 +468,12 @@ console.log("totalPages > 1:", totalPages > 1);
           </select>
         </div>
 
-               <div>
+        <div>
           <label className="block text-sm mb-1">Desde</label>
           <input
             type="date"
             value={from}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value && value.length === 10) {
-                const year = parseInt(value.split('-')[0]);
-                if (year >= 2020 && year <= 2030) {
-                  setFrom(value);
-                }
-              } else {
-                setFrom(value);
-              }
-            }}
-            min="2020-01-01"
-            max="2030-12-31"
+            onChange={(e) => setFrom(e.target.value)}
             className="bg-gray-900 border border-gray-700 px-3 py-2 rounded text-white"
           />
         </div>
@@ -495,19 +483,7 @@ console.log("totalPages > 1:", totalPages > 1);
           <input
             type="date"
             value={to}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value && value.length === 10) {
-                const year = parseInt(value.split('-')[0]);
-                if (year >= 2020 && year <= 2030) {
-                  setTo(value);
-                }
-              } else {
-                setTo(value);
-              }
-            }}
-            min="2020-01-01"
-            max="2030-12-31"
+            onChange={(e) => setTo(e.target.value)}
             className="bg-gray-900 border border-gray-700 px-3 py-2 rounded text-white"
           />
         </div>
