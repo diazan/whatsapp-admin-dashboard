@@ -123,6 +123,14 @@ useEffect(() => {
 
       const data = await res.json();
 
+      console.log("📊 PAGINATION DEBUG:");
+console.log("current page:", page);
+console.log("pageSize:", pageSize); 
+console.log("total from API:", data.count);
+console.log("data.data length:", data.data?.length);
+console.log("totalPages calculated:", Math.ceil((data.count ?? 0) / pageSize));
+console.log("should show pagination:", Math.ceil((data.count ?? 0) / pageSize) > 1);
+
       setAppointments(data.data ?? []);
       setTotal(data.count ?? 0);
 
@@ -359,6 +367,12 @@ useEffect(() => {
   }
 };
 
+console.log("🔍 SIMPLE DEBUG:");
+console.log("total:", total);
+console.log("pageSize:", pageSize);  
+console.log("totalPages:", totalPages);
+console.log("totalPages > 1:", totalPages > 1);
+
   return (
     <div className="p-8 max-w-6xl mx-auto text-white">
       <div className="flex items-center justify-between mb-6">
@@ -454,12 +468,24 @@ useEffect(() => {
           </select>
         </div>
 
-        <div>
+               <div>
           <label className="block text-sm mb-1">Desde</label>
           <input
             type="date"
             value={from}
-            onChange={(e) => setFrom(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value && value.length === 10) {
+                const year = parseInt(value.split('-')[0]);
+                if (year >= 2020 && year <= 2030) {
+                  setFrom(value);
+                }
+              } else {
+                setFrom(value);
+              }
+            }}
+            min="2020-01-01"
+            max="2030-12-31"
             className="bg-gray-900 border border-gray-700 px-3 py-2 rounded text-white"
           />
         </div>
@@ -469,7 +495,19 @@ useEffect(() => {
           <input
             type="date"
             value={to}
-            onChange={(e) => setTo(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value && value.length === 10) {
+                const year = parseInt(value.split('-')[0]);
+                if (year >= 2020 && year <= 2030) {
+                  setTo(value);
+                }
+              } else {
+                setTo(value);
+              }
+            }}
+            min="2020-01-01"
+            max="2030-12-31"
             className="bg-gray-900 border border-gray-700 px-3 py-2 rounded text-white"
           />
         </div>
