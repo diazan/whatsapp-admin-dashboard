@@ -1,3 +1,4 @@
+import Image from "next/image";
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-black text-white px-6 py-16">

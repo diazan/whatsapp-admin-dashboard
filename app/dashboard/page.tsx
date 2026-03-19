@@ -123,8 +123,8 @@ useEffect(() => {
 
       const data = await res.json();
 
-      setAppointments(data.data);
-      setTotal(data.count);
+      setAppointments(data.data ?? []);
+      setTotal(data.count ?? 0);
 
       if (data.metrics) {
         setMetrics(data.metrics);
@@ -496,7 +496,13 @@ useEffect(() => {
             </tr>
           </thead>
           <tbody>
-            {appointments.map((appt) => (
+            {appointments.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="p-4 text-center text-gray-400">
+                  No hay citas registradas.
+                </td>
+              </tr>
+            ) : appointments.map((appt) => (
               <tr key={appt.id} className="border-t border-gray-700">
                 <td className="p-3">{appt.patientName}</td>
                 <td className="p-3 text-gray-300">{appt.patientPhone}</td>
