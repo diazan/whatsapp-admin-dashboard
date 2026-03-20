@@ -387,11 +387,25 @@ export default function ClinicDashboard() {
                       );
                     }
 
+                    // DESPUÉS — cancelled muestra "Finalizada" + botón Mensaje
                     if (appt.status === "cancelled") {
                       return (
-                        <span className="text-gray-500 text-sm italic">
-                          Finalizada
-                        </span>
+                        <div className="flex justify-center gap-2">
+                          <span className="text-gray-500 text-sm italic mr-2">
+                            Finalizada
+                          </span>
+                          <button
+                            onClick={() =>
+                              handleSendManualMessage(
+                                appt.patientPhone,
+                                appt.patientName
+                              )
+                            }
+                            className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition text-sm"
+                          >
+                            Mensaje
+                          </button>
+                        </div>
                       );
                     }
 
