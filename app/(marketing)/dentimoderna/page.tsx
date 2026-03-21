@@ -1030,7 +1030,7 @@ export default function DentiModernaPage() {
           <div className="section-label">Testimonios</div>
           <h2 className="section-title">Lo que dicen nuestros pacientes</h2>
           <p className="section-desc">
-            Más de 2,000 familias en Cancún ya confían en DentiModerna para
+            Más de 2,000 familias en Cali ya confían en DentiModerna para
             cuidar su salud dental.
           </p>
           <div className="testimonials-grid">
@@ -1096,7 +1096,7 @@ export default function DentiModernaPage() {
             <div>
               <div className="footer-brand-name">Denti<span>Moderna</span></div>
               <p className="footer-brand-desc">
-                Clínica dental profesional en Cancún, Quintana Roo. Tecnología
+                Clínica dental profesional en Cali, Valle del Cauca. Tecnología
                 de vanguardia al servicio de tu sonrisa. Agenda tu cita por
                 WhatsApp en cualquier momento.
               </p>
