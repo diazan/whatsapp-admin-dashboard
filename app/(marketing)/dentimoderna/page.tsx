@@ -9,42 +9,42 @@ export default function DentiModernaPage() {
       title: "Ortodoncia",
       description:
         "Brackets tradicionales, brackets estéticos y alineadores invisibles. Corrección de mordida y alineación dental con tecnología de punta.",
-      price: "Desde \$8,500 MXN",
+      price: "Desde \$1.800.000 COP",
     },
     {
       icon: "🔩",
       title: "Implantes Dentales",
       description:
         "Implantes de titanio de alta calidad con garantía. Recupera tu sonrisa completa con una solución permanente y natural.",
-      price: "Desde \$18,000 MXN",
+      price: "Desde \$3.700.000 COP",
     },
     {
       icon: "✨",
       title: "Blanqueamiento",
       description:
         "Blanqueamiento profesional en consultorio en solo 1 hora. Resultados visibles desde la primera sesión. Hasta 8 tonos más blanco.",
-      price: "Desde \$2,500 MXN",
+      price: "Desde \$500.000 COP",
     },
     {
       icon: "🩺",
       title: "Limpieza Dental",
       description:
         "Profilaxis dental profesional con ultrasonido. Eliminación de sarro, placa y manchas. Recomendada cada 6 meses.",
-      price: "Desde \$800 MXN",
+      price: "Desde \$165.000 COP",
     },
     {
       icon: "👶",
       title: "Odontopediatría",
       description:
         "Atención dental especializada para niños en un ambiente amigable y sin miedo. Selladores, flúor y educación preventiva.",
-      price: "Desde \$500 MXN",
+      price: "Desde \$100.000 COP",
     },
     {
       icon: "💎",
       title: "Carillas de Porcelana",
       description:
         "Transforma tu sonrisa con carillas ultra-delgadas. Corrección estética de color, forma y tamaño dental. Resultados inmediatos.",
-      price: "Desde \$4,500 MXN c/u",
+      price: "Desde \$1.000.000 COP c/u",
     },
   ];
 
