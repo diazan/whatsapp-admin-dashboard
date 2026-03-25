@@ -22,21 +22,30 @@ export default function TestWhatsApp() {
     };
   }, []);
 
-  const iniciarSignup = () => {
-    (window as any).FB.login(
-      function (response: any) {
-        console.log("RESPONSE:", response);
+const iniciarSignup = () => {
+  console.log("click detectado");
+
+  if (!(window as any).FB) {
+    console.log("FB no existe aún");
+    return;
+  }
+
+  console.log("FB sí existe");
+
+  (window as any).FB.login(
+    function (response: any) {
+      console.log("RESPONSE:", response);
+    },
+    {
+      config_id: "TU_CONFIG_ID",
+      response_type: "code",
+      override_default_response_type: true,
+      extras: {
+        setup: {},
       },
-      {
-        config_id: "TU_CONFIG_ID",
-        response_type: "code",
-        override_default_response_type: true,
-        extras: {
-          setup: {},
-        },
-      }
-    );
-  };
+    }
+  );
+};
 
   return (
     <div style={{ padding: "20px" }}>
