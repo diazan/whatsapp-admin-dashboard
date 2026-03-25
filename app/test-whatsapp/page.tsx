@@ -39,12 +39,20 @@ export default function TestWhatsApp() {
     );
   };
 
-  return (
-    <div style={{ padding: "20px" }}>
-      <h2>Conectar WhatsApp</h2>
-      <button onClick={iniciarSignup}>
-        Conectar WhatsApp
-      </button>
-    </div>
-  );
+ return (
+  <div style={{ padding: "20px" }}>
+    <h2>Conectar WhatsApp</h2>
+
+    <button
+      onClick={iniciarSignup}
+      style={{
+        padding: "10px 20px",
+        fontSize: "16px",
+        cursor: "pointer"
+      }}
+    >
+      Conectar WhatsApp
+    </button>
+  </div>
+);
 }
