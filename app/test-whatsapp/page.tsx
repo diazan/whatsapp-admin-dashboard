@@ -36,6 +36,8 @@ const iniciarSignup = () => {
 
   console.log("FB listo, ejecutando login");
 
+  console.log("CONFIG_ID:", "1562865618139738");
+
   (window as any).FB.login(
     function (response: any) {
       console.log("RESPONSE:", response);
