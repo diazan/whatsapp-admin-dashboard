@@ -40,7 +40,6 @@ export default function TestWhatsApp() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Conectar WhatsApp</h2>
 
       <div
         onClick={iniciarSignup}
