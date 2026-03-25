@@ -70,8 +70,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       phone_number_id: phone_number.id,
     });
 
-  } catch (err: any) {
-    console.error("Error en flujo OAuth:", err.response?.data || err.message);
-    res.status(500).json({ error: "Error en flujo OAuth", details: err.response?.data || err.message });
-  }
+} catch (err: any) {
+  console.error("Error completo:", err);                  // imprime el error completo
+  console.error("Err.response:", err.response?.data);     // imprime lo que Meta devuelve
+  res.status(500).json({
+    error: "Error en flujo OAuth",
+    details: err.response?.data || err.message,
+  });
+}
 }
