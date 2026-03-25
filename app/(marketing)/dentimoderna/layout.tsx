@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "DentiModerna — Clínica Dental Profesional | Cancún, México",
+  title: "DentiModerna — Clínica Dental Profesional | Cali, Colombia",
   description:
-    "Clínica dental moderna en Cancún. Servicios de ortodoncia, implantes, blanqueamiento y más. Agenda tu cita en minutos por WhatsApp. Atención personalizada y tecnología de vanguardia.",
+    "Clínica dental moderna en Cali. Servicios de ortodoncia, implantes, blanqueamiento y más. Agenda tu cita en minutos por WhatsApp. Atención personalizada y tecnología de vanguardia.",
   keywords:
-    "dentista cancún, clínica dental cancún, ortodoncia cancún, implantes dentales, blanqueamiento dental, dentimoderna",
+    "dentista Cali, clínica dental Cali, ortodoncia Cali, implantes dentales, blanqueamiento dental, dentimoderna",
   authors: [{ name: "DentiModerna" }],
   openGraph: {
     title: "DentiModerna — Clínica Dental Profesional",
     description:
-      "Agenda tu cita dental en Cancún por WhatsApp. Ortodoncia, implantes, blanqueamiento y más.",
+      "Agenda tu cita dental en Cali por WhatsApp. Ortodoncia, implantes, blanqueamiento y más.",
     type: "website",
     locale: "es_MX",
     url: "https://dentimoderna.lat",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "DentiModerna — Clínica Dental Profesional",
-    description: "Agenda tu cita dental en Cancún por WhatsApp.",
+    description: "Agenda tu cita dental en Cali por WhatsApp.",
   },
   robots: {
     index: true,
