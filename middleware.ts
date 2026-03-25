@@ -12,6 +12,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(new URL("/dentimoderna", request.url));
   }
 
+  // ← Agrega esto
+  if (host === "dentibot.dentimoderna.lat" && pathname === "/") {
+    return NextResponse.rewrite(new URL("/dentibot", request.url));
+  }
+
   return NextResponse.next();
 }
 

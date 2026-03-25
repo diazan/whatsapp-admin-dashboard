@@ -1,9 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "has": [{ "type": "host", "value": "dentibot.dentimoderna.lat" }],
-      "destination": "/dentibot/$1"
-    }
-  ]
-}
