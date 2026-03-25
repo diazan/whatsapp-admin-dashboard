@@ -5,7 +5,6 @@ import { useEffect } from "react";
 export default function TestWhatsApp() {
 
   useEffect(() => {
-    // Cargar SDK
     const script = document.createElement("script");
     script.src = "https://connect.facebook.net/en_US/sdk.js";
     script.async = true;
@@ -17,7 +16,7 @@ export default function TestWhatsApp() {
       (window as any).FB.init({
         appId: "TU_APP_ID",
         cookie: true,
-        xfbml: true,
+        xfbml: false,
         version: "v19.0",
       });
     };
@@ -39,20 +38,28 @@ export default function TestWhatsApp() {
     );
   };
 
- return (
-  <div style={{ padding: "20px" }}>
-    <h2>Conectar WhatsApp</h2>
+  return (
+    <div style={{ padding: "20px" }}>
+      <h2>Conectar WhatsApp</h2>
 
-    <button
-      onClick={iniciarSignup}
-      style={{
-        padding: "10px 20px",
-        fontSize: "16px",
-        cursor: "pointer"
-      }}
-    >
-      Conectar WhatsApp
-    </button>
-  </div>
-);
+      <div
+        onClick={iniciarSignup}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === "Enter" && iniciarSignup()}
+        style={{
+          display: "inline-block",
+          padding: "10px 20px",
+          fontSize: "16px",
+          cursor: "pointer",
+          backgroundColor: "#1877F2",
+          color: "white",
+          borderRadius: "6px",
+          userSelect: "none",
+        }}
+      >
+        Conectar WhatsApp
+      </div>
+    </div>
+  );
 }
