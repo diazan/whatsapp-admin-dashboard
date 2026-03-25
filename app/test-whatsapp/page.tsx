@@ -31,7 +31,7 @@ export default function TestWhatsApp() {
     console.log("Código del popup:", code);
 
     try {
-      const res = await fetch("/oauth/callback", {
+      const res = await fetch("/api/oauth/callback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code }),
