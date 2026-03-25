@@ -4,70 +4,47 @@ import { useEffect } from "react";
 
 export default function TestWhatsApp() {
 
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://connect.facebook.net/en_US/sdk.js";
-    script.async = true;
-    script.defer = true;
-    script.crossOrigin = "anonymous";
-    document.body.appendChild(script);
+useEffect(() => {
+  const script = document.createElement("script");
+  script.src = "https://connect.facebook.net/en_US/sdk.js";
+  script.async = true;
+  script.defer = true;
 
-    (window as any).fbAsyncInit = function () {
-      (window as any).FB.init({
-        appId: "TU_APP_ID",
-        cookie: true,
-        xfbml: false,
-        version: "v19.0",
-      });
-    };
-  }, []);
+  script.onload = () => {
+    (window as any).FB.init({
+      appId: "1957597294843345",
+      cookie: true,
+      xfbml: false,
+      version: "v19.0",
+    });
+
+    // 👇 IMPORTANTE
+    (window as any).fbReady = true;
+    console.log("FB listo");
+  };
+
+  document.body.appendChild(script);
+}, []);
 
 const iniciarSignup = () => {
   console.log("click detectado");
 
-  if (!(window as any).FB) {
-    console.log("FB no existe aún");
+  if (!(window as any).fbReady) {
+    console.log("FB aún no está listo");
     return;
   }
 
-  console.log("FB sí existe");
+  console.log("FB listo, ejecutando login");
 
   (window as any).FB.login(
     function (response: any) {
       console.log("RESPONSE:", response);
     },
     {
-      config_id: "TU_CONFIG_ID",
+      config_id: "1562865618139738",
       response_type: "code",
       override_default_response_type: true,
-      extras: {
-        setup: {},
-      },
     }
   );
 };
-
-  return (
-    <div style={{ padding: "20px" }}>
-
-      <div
-        onClick={iniciarSignup}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === "Enter" && iniciarSignup()}
-        style={{
-          display: "inline-block",
-          padding: "10px 20px",
-          fontSize: "16px",
-          cursor: "pointer",
-          backgroundColor: "#1877F2",
-          color: "white",
-          borderRadius: "6px",
-          userSelect: "none",
-        }}
-      >
-        Conectar WhatsApp
-      </div>
-    </div>
-  );
 }
