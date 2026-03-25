@@ -49,4 +49,13 @@ const iniciarSignup = () => {
     }
   );
 };
+
+  // 👇 AQUÍ VA EL RETURN
+  return (
+    <div style={{ padding: "20px" }}>
+      <button onClick={iniciarSignup}>
+        Conectar WhatsApp
+      </button>
+    </div>
+  );
 }
