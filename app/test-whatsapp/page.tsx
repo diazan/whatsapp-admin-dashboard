@@ -3,9 +3,6 @@
 
 import { useEffect } from "react";
 
-// -----------------------------
-// Declaración global para TypeScript
-// -----------------------------
 declare global {
   interface Window {
     FB?: {
@@ -29,9 +26,6 @@ declare global {
   }
 }
 
-// -----------------------------
-// Componente principal
-// -----------------------------
 export default function TestWhatsApp() {
   useEffect(() => {
     const script = document.createElement("script");
@@ -41,7 +35,7 @@ export default function TestWhatsApp() {
 
     script.onload = () => {
       window.FB?.init({
-        appId: "1957597294843345", // reemplaza con tu App ID
+        appId: "1957597294843345", // tu App ID
         cookie: true,
         xfbml: false,
         version: "v19.0",
@@ -53,63 +47,29 @@ export default function TestWhatsApp() {
     document.body.appendChild(script);
   }, []);
 
-  // -----------------------------
-  // Función para iniciar Embedded Signup
-  // -----------------------------
   const iniciarSignup = () => {
     if (!window.fbReady) {
-      console.warn("FB SDK no está listo todavía");
+      console.warn("FB SDK no está listo");
       return;
     }
 
+    // Abre popup Embedded Signup
     window.FB?.login(
-      (response: any) => {
-        // LOG 1: respuesta completa de FB
-        console.log("FB.login response completo:", response);
-
-        const code = response?.authResponse?.code as string | undefined;
-
-        // LOG 2: code recibido y timestamp
-        console.log("Code recibido en frontend:", code, "Timestamp:", Date.now());
-
-        if (!code) {
-          console.error("No se recibió code del popup:", response);
-          return;
-        }
-
-        // Enviar code al backend
-        void (async () => {
-          try {
-            // LOG 3: justo antes de enviar al backend
-            console.log("Enviando code al backend:", code, "Timestamp:", Date.now());
-
-            const res = await fetch("/api/oauth/callback", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ code }),
-            });
-
-            const data = await res.json();
-
-            // LOG 4: respuesta del backend
-            console.log("Respuesta backend:", data);
-          } catch (err) {
-            console.error("Error enviando code al backend:", err);
-          }
-        })();
+      () => {
+        console.log("Popup Embedded Signup abierto. Esperando redirect al backend...");
       },
       {
-        config_id: "1562865618139738", // tu config_id de Embedded Signup
+        config_id: "1562865618139738", // tu config_id
         response_type: "code",
         override_default_response_type: true,
-        redirect_uri: "https://www.kerbo.co/api/oauth/callback", // debe coincidir exactamente
+        redirect_uri: "https://www.kerbo.co/api/oauth/callback", // apuntando al backend
       }
     );
   };
 
   return (
     <div style={{ padding: "20px" }}>
-      <button onClick={() => void iniciarSignup()}>Conectar WhatsApp</button>
+      <button onClick={iniciarSignup}>Conectar WhatsApp</button>
     </div>
   );
 }
