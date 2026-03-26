@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       {
         params: {
           client_id: APP_ID,
-          redirect_uri: "https://semibourgeois-giuseppe-obsolescently.ngrok-free.dev/api/oauth/callback", // tu URL de callback
+          redirect_uri: "https://www.kerbo.co/api/oauth/callback", // tu URL de callback
           client_secret: APP_SECRET,
           code,
         },
