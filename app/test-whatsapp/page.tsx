@@ -56,20 +56,31 @@ export default function TestWhatsApp() {
     console.log("CONFIG_ID:", "1562865618139738");
 
     (window as any).FB.login(
-      function (response: any) {
-        console.log("RESPONSE:", response);
+  function (response: any) {
+    if (response.authResponse && response.authResponse.code) {
+      const code = response.authResponse.code;
+      console.log("Code recibido:", code);
 
-        // 👈 Aquí llamamos a la función para enviar el code
-        if (response.authResponse?.code) {
-          handleCodeReceived(response.authResponse);
-        }
-      },
-      {
-        config_id: "1562865618139738",
-        response_type: "code",
-        override_default_response_type: true,
-      }
-    );
+      // 🔹 Enviar inmediatamente al backend
+      fetch("https://www.kerbo.co/api/oauth/callback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      })
+      .then(res => res.json())
+      .then(data => console.log("Respuesta backend:", data))
+      .catch(err => console.error("Error enviando code al backend:", err));
+    } else {
+      console.error("No se recibió code del popup:", response);
+    }
+  },
+  {
+    config_id: "1562865618139738",
+    response_type: "code",
+    override_default_response_type: true,
+    redirect_uri: "https://www.kerbo.co/api/oauth/callback", // debe coincidir con backend y Meta
+  }
+);
   };
 
   return (
