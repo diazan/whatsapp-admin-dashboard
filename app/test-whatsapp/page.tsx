@@ -11,12 +11,11 @@ export default function TestWhatsApp() {
 
     script.onload = () => {
       (window as any).FB.init({
-        appId: "1957597294843345", // tu APP_ID de Meta
+        appId: "1957597294843345", // tu APP_ID
         cookie: true,
         xfbml: false,
         version: "v19.0",
       });
-
       (window as any).fbReady = true;
       console.log("FB SDK listo");
     };
@@ -25,28 +24,29 @@ export default function TestWhatsApp() {
   }, []);
 
   const iniciarSignup = () => {
-    if (!(window as any).fbReady) {
-      console.log("FB aún no está listo");
-      return;
-    }
+    if (!(window as any).fbReady) return;
 
     (window as any).FB.login(
-      function (response: any) {
+      async function (response: any) {
         if (response.authResponse && response.authResponse.code) {
           const code = response.authResponse.code;
           console.log("Code recibido:", code);
 
-          // 🔹 POST al backend inmediatamente
-          fetch("https://www.kerbo.co/api/oauth/callback", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ code }),
-          })
-            .then(res => res.json())
-            .then(data => console.log("Respuesta backend:", data))
-            .catch(err =>
-              console.error("Error enviando code al backend:", err)
+          // 🔹 Enviar inmediatamente al backend
+          try {
+            const res = await fetch(
+              "https://www.kerbo.co/api/oauth/callback",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code }),
+              }
             );
+            const data = await res.json();
+            console.log("Respuesta backend:", data);
+          } catch (err) {
+            console.error("Error enviando code al backend:", err);
+          }
         } else {
           console.error("No se recibió code del popup:", response);
         }
@@ -55,7 +55,7 @@ export default function TestWhatsApp() {
         config_id: "1562865618139738",
         response_type: "code",
         override_default_response_type: true,
-        redirect_uri: "https://www.kerbo.co/api/oauth/callback", // debe coincidir con tu backend y Meta
+        redirect_uri: "https://www.kerbo.co/api/oauth/callback", // exacta y registrada en Meta
       }
     );
   };
