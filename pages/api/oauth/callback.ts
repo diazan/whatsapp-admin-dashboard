@@ -8,7 +8,6 @@ const REDIRECT_URI = "https://www.kerbo.co/api/oauth/callback";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const isGet = req.method === "GET";
 
-  // ✅ GET = redirect de Meta, POST = popup de FB.login
   const code = isGet
     ? (req.query.code as string)
     : (req.body?.code as string);
@@ -21,7 +20,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     // 1️⃣ Code → Short token
-    // ⚠️ Solo incluir redirect_uri si vino por GET (redirect)
     const tokenParams: Record<string, string> = {
       client_id: APP_ID,
       client_secret: APP_SECRET,
@@ -56,25 +54,41 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const access_token = longTokenResponse.data.access_token;
     console.log("✅ Long token OK");
 
-    // 3️⃣ Obtener WABA
-    const wabaResponse = await axios.get(
-      "https://graph.facebook.com/v19.0/me/whatsapp_business_accounts",
-      { params: { access_token } }
+    // 3️⃣ Obtener WABA via debug_token
+    const debugResponse = await axios.get(
+      "https://graph.facebook.com/v19.0/debug_token",
+      {
+        params: {
+          input_token: access_token,
+          access_token: `${APP_ID}|${APP_SECRET}`,
+        },
+      }
     );
 
-    const waba = wabaResponse.data.data?.[0];
-    if (!waba) {
+    console.log("✅ Debug token:", JSON.stringify(debugResponse.data, null, 2));
+
+    const granularScopes = debugResponse.data.data?.granular_scopes || [];
+    const wabaScope = granularScopes.find(
+      (s: any) => s.scope === "whatsapp_business_management"
+    );
+
+    const waba_id = wabaScope?.target_ids?.[0];
+    if (!waba_id) {
       return res.status(400).json({
-        error: "No WABA found",
-        raw: wabaResponse.data,
+        error: "No WABA found in token scopes",
+        raw: debugResponse.data,
       });
     }
 
+    console.log("✅ WABA ID:", waba_id);
+
     // 4️⃣ Obtener Phone Number
     const phoneResponse = await axios.get(
-      `https://graph.facebook.com/v19.0/${waba.id}/phone_numbers`,
+      `https://graph.facebook.com/v19.0/${waba_id}/phone_numbers`,
       { params: { access_token } }
     );
+
+    console.log("✅ Phones:", JSON.stringify(phoneResponse.data, null, 2));
 
     const phone = phoneResponse.data.data?.[0];
     if (!phone) {
@@ -88,8 +102,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const result = {
       message: "✅ Onboarding completado",
       access_token,
-      waba_id: waba.id,
-      waba_name: waba.name,
+      waba_id,
       phone_number_id: phone.id,
       display_phone_number: phone.display_phone_number,
     };
