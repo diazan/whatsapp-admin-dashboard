@@ -58,17 +58,18 @@ export default function TestWhatsApp() {
     document.body.appendChild(script);
   }, []);
 
-  const iniciarSignup = async () => {
-    if (!window.fbReady || !window.FB) {
-      console.warn("FB SDK no está listo");
-      return;
-    }
+  const iniciarSignup = () => {
+  if (!window.fbReady || !window.FB) {
+    console.warn("FB SDK no está listo");
+    return;
+  }
 
-    window.FB.login(
-      async (response: FacebookLoginResponse) => {
+  window.FB.login(
+    (response: FacebookLoginResponse) => {
+      // ✅ El callback es síncrono — la lógica async va adentro
+      void (async () => {
         console.log("Respuesta del popup:", response);
 
-        // El usuario canceló o no autorizó
         if (response.status !== "connected" || !response.authResponse) {
           console.warn("El usuario no completó el signup:", response.status);
           return;
@@ -83,7 +84,6 @@ export default function TestWhatsApp() {
 
         console.log("Code recibido:", code);
 
-        // Ahora sí enviamos el code al backend para exchangear
         try {
           const res = await fetch("/api/oauth/callback", {
             method: "POST",
@@ -99,19 +99,19 @@ export default function TestWhatsApp() {
             return;
           }
 
-          console.log("✅ WABA vinculada correctamente:", data);
+          console.log("✅ WABA vinculada:", data);
         } catch (err) {
           console.error("Error al llamar al backend:", err);
         }
-      },
-      {
-        config_id: "1562865618139738",
-        response_type: "code",
-        override_default_response_type: true,
-        // ⚠️ Sin redirect_uri — el SDK maneja el popup internamente
-      }
-    );
-  };
+      })();
+    },
+    {
+      config_id: "1562865618139738",
+      response_type: "code",
+      override_default_response_type: true,
+    }
+  );
+};
 
   return (
     <div style={{ padding: "20px" }}>
