@@ -2,6 +2,32 @@
 
 import { useEffect } from "react";
 
+// global.d.ts
+export {};
+
+declare global {
+  interface Window {
+    FB?: {
+      init: (config: {
+        appId: string;
+        cookie: boolean;
+        xfbml: boolean;
+        version: string;
+      }) => void;
+      login: (
+        callback: (response: any) => void,
+        options?: {
+          config_id?: string;
+          response_type?: string;
+          override_default_response_type?: boolean;
+          redirect_uri?: string;
+        }
+      ) => void;
+    };
+    fbReady?: boolean;
+  }
+}
+
 export default function TestWhatsApp() {
   useEffect(() => {
     const script = document.createElement("script");
@@ -24,41 +50,39 @@ export default function TestWhatsApp() {
   }, []);
 
   const iniciarSignup = () => {
-    if (!(window as any).fbReady) return;
+  void (async () => {
+    if (!window.fbReady) return;
 
-    (window as any).FB.login(
-      async function (response: any) {
-        if (response.authResponse && response.authResponse.code) {
-          const code = response.authResponse.code;
-          console.log("Code recibido:", code);
+    window.FB?.login(
+      async (response: any) => {
+        const code = response?.authResponse?.code as string | undefined;
 
-          // 🔹 Enviar inmediatamente al backend
-          try {
-            const res = await fetch(
-              "https://www.kerbo.co/api/oauth/callback",
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ code }),
-              }
-            );
-            const data = await res.json();
-            console.log("Respuesta backend:", data);
-          } catch (err) {
-            console.error("Error enviando code al backend:", err);
-          }
-        } else {
+        if (!code) {
           console.error("No se recibió code del popup:", response);
+          return;
+        }
+
+        try {
+          const res = await fetch("/api/oauth/callback", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code }),
+          });
+          const data = await res.json();
+          console.log("Respuesta backend:", data);
+        } catch (err) {
+          console.error("Error enviando code al backend:", err);
         }
       },
       {
         config_id: "1562865618139738",
         response_type: "code",
         override_default_response_type: true,
-        redirect_uri: "https://www.kerbo.co/api/oauth/callback", // exacta y registrada en Meta
+        redirect_uri: "https://www.kerbo.co/api/oauth/callback",
       }
     );
-  };
+  })();
+};
 
   return (
     <div style={{ padding: "20px" }}>
