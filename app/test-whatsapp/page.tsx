@@ -64,16 +64,25 @@ export default function TestWhatsApp() {
 
     window.FB?.login(
       (response: any) => {
-        // Envolvemos código async dentro de IIFE
+        // LOG 1: respuesta completa de FB
+        console.log("FB.login response completo:", response);
+
+        const code = response?.authResponse?.code as string | undefined;
+
+        // LOG 2: code recibido y timestamp
+        console.log("Code recibido en frontend:", code, "Timestamp:", Date.now());
+
+        if (!code) {
+          console.error("No se recibió code del popup:", response);
+          return;
+        }
+
+        // Enviar code al backend
         void (async () => {
-          const code = response?.authResponse?.code as string | undefined;
-
-          if (!code) {
-            console.error("No se recibió code del popup:", response);
-            return;
-          }
-
           try {
+            // LOG 3: justo antes de enviar al backend
+            console.log("Enviando code al backend:", code, "Timestamp:", Date.now());
+
             const res = await fetch("/api/oauth/callback", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -81,6 +90,8 @@ export default function TestWhatsApp() {
             });
 
             const data = await res.json();
+
+            // LOG 4: respuesta del backend
             console.log("Respuesta backend:", data);
           } catch (err) {
             console.error("Error enviando code al backend:", err);
