@@ -72,13 +72,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       (s: any) => s.scope === "whatsapp_business_management"
     );
 
-    const waba_id = wabaScope?.target_ids?.[0];
-    if (!waba_id) {
-      return res.status(400).json({
-        error: "No WABA found in token scopes",
-        raw: debugResponse.data,
-      });
-    }
+// Usa el WABA que ya conoces
+const waba_id = process.env.KNOWN_WABA_ID!;
 
     console.log("✅ WABA ID:", waba_id);
 
